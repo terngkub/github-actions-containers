@@ -29,15 +29,16 @@ jobs:
           key: ${{ env.CACHE_KEY }}-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         run: npm ci
+      - name: Output information
+        run: |
+          echo "$MONGODB_CONNECTION_PROTOCOL"
+          echo "$MONGODB_CLUSTER_ADDRESS"
+          echo "$MONGODB_USERNAME"
+          echo "$MONGODB_PASSWORD"
       - name: Run server
-        id: run-server
         run: npm start & npx wait-on http://127.0.0.1:$PORT # requires MongoDB Atlas to accept requests from anywhere!
       - name: Run tests
         run: npm test
-      - name: Output information
-        run: |
-          echo "MONGODB_USERNAME: $MONGODB_USERNAME"
-        if: steps.run-server.outcome == 'failure'
   deploy:
     needs: test
     runs-on: ubuntu-latest
